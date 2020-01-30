@@ -1,0 +1,4 @@
+MyButton	KEYWORD1
+isPushed	KEYWORD2
+isLongPushed	KEYWORD2
+read	KEYWORD2

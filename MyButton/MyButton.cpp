@@ -34,11 +34,11 @@ MyButton::MyButton(uint8_t pin)
   _lastButtonState = digitalRead(_pin);
 }
 
-void setPushDelay(uint8_t t) {
+void MyButton::setPushDelay(uint8_t t) {
 	_pushDelay = (unsigned long) t;
 }
 
-void setLongPushDelay(uint8_t t) {
+void MyButton::setLongPushDelay(uint8_t t) {
 	_longDelay = (unsigned long) t;
 }
 
@@ -46,7 +46,7 @@ void MyButton::read()
 {
   int reading = digitalRead(_pin);
 
-    if (reading != _buttonState) {
+    if (reading != _lastButtonState) {
       //what is the new state ?
         if (reading == HIGH) { 	
             _isPushed = true;
@@ -67,7 +67,7 @@ void MyButton::read()
 				_wasPushed = false;
 			}	
         }
-        _buttonState = reading;
+        _lastButtonState = reading;
     }
 }
 

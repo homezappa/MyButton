@@ -14,7 +14,6 @@ class MyButton
     MyButton(uint8_t);						// #Pin
 	MyButton(uint8_t,uint8_t);				// #Pin, INPUT_TYPE
 	MyButton(uint8_t,uint8_t,uint8_t);		// #Pin, INPUT_TYPE, msec long pushed
-    bool isLongPushed();
     bool isPushed();
 	bool wasPushed();
 	bool wasLongPushed();
@@ -24,8 +23,8 @@ class MyButton
   private:
     int        	  _pin;
     bool       	  _isPushed;
+    bool       	  _wasPushed;
     bool       	  _wasLongPushed;
-    int           _buttonState;         // the current reading from the input pin
     int           _lastButtonState;   	// the previous reading from the input pin
     unsigned long _RaiseTime;  			// the time the output pin was HIGH from LOW
     unsigned long _FallTime;  			// the time the output pin was LOW from HIGH

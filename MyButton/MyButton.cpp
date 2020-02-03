@@ -7,7 +7,13 @@
 #include "Arduino.h"
 #include "MyButton.h"
 
-MyButton::MyButton(uint8_t pin, uint8_t mode, uint8_t longDelay)
+
+MyButton::MyButton() {
+
+}
+
+
+void MyButton::begin(uint8_t pin, uint8_t mode, uint8_t longDelay)
 {
   pinMode(pin, mode);
   _pin = pin;
@@ -16,7 +22,7 @@ MyButton::MyButton(uint8_t pin, uint8_t mode, uint8_t longDelay)
   _lastButtonState = digitalRead(_pin);
 }
 
-MyButton::MyButton(uint8_t pin, uint8_t mode)
+void MyButton::begin(uint8_t pin, uint8_t mode)
 {
   pinMode(pin, mode);
   _pin = pin;
@@ -25,7 +31,7 @@ MyButton::MyButton(uint8_t pin, uint8_t mode)
   _lastButtonState = digitalRead(_pin);
 }
 
-MyButton::MyButton(uint8_t pin)
+void MyButton::begin(uint8_t pin)
 {
   pinMode(pin, INPUT);
   _pin = pin;
@@ -33,6 +39,7 @@ MyButton::MyButton(uint8_t pin)
   _pushDelay = (unsigned long) 80;
   _lastButtonState = digitalRead(_pin);
 }
+
 
 void MyButton::setPushDelay(uint8_t t) {
 	_pushDelay = (unsigned long) t;
@@ -53,10 +60,12 @@ void MyButton::read()
 			_wasPushed = false;
 			_wasLongPushed = false;
             // was low, now high, start timing for normal and long wasSomething
-            _RaiseTime = millis();
+            _FallTime = _RaiseTime = millis();
         } else {
             // was High, now Low, check timing for normal and long wasSomething
             _isPushed = false;
+			_wasPushed = false;
+			_wasLongPushed = false;
 			_FallTime = millis();
 			if (( _FallTime - _RaiseTime) > _longDelay ) {
 				_wasLongPushed = true;
@@ -72,13 +81,19 @@ void MyButton::read()
 }
 
 bool MyButton::isPushed() {
-    return _isPushed;
+    bool retVal = _isPushed;
+    _isPushed = false;
+    return retVal;
 }
 
 bool MyButton::wasPushed() {
-    return _wasPushed;
+    bool retVal = _wasPushed;
+    _wasPushed = false;
+    return retVal;
 }
 
 bool MyButton::wasLongPushed() {
-    return _wasLongPushed;
+    bool retVal = _wasLongPushed;
+    _wasLongPushed = false;
+    return retVal;
 }

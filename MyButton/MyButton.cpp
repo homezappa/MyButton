@@ -12,10 +12,8 @@ MyButton::MyButton(uint8_t pin, uint8_t mode, uint8_t longDelay)
   pinMode(pin, mode);
   _pin = pin;
   _longDelay = (unsigned long) longDelay;
-  _lastButtonState = LOW;
-  _buttonState = LOW;
-  _lastDebounceTime = 0;
-  _debounceDelay = 50;
+  _pushDelay = (unsigned long) 80;
+  _lastButtonState = digitalRead(_pin);
 }
 
 MyButton::MyButton(uint8_t pin, uint8_t mode)
@@ -23,10 +21,8 @@ MyButton::MyButton(uint8_t pin, uint8_t mode)
   pinMode(pin, mode);
   _pin = pin;
   _longDelay = (unsigned long) 2000;
-  _lastButtonState = LOW;
-  _buttonState = LOW;
-  _lastDebounceTime = 0;
-  _debounceDelay = 50;
+  _pushDelay = (unsigned long) 80;
+  _lastButtonState = digitalRead(_pin);
 }
 
 MyButton::MyButton(uint8_t pin)
@@ -34,67 +30,55 @@ MyButton::MyButton(uint8_t pin)
   pinMode(pin, INPUT);
   _pin = pin;
   _longDelay = 2000;
-  _lastButtonState = LOW;
-  _buttonState = LOW;
-  _lastDebounceTime = 0;
-  _debounceDelay = 50;
+  _pushDelay = (unsigned long) 80;
+  _lastButtonState = digitalRead(_pin);
+}
+
+void setPushDelay(uint8_t t) {
+	_pushDelay = (unsigned long) t;
+}
+
+void setLongPushDelay(uint8_t t) {
+	_longDelay = (unsigned long) t;
 }
 
 void MyButton::read()
 {
   int reading = digitalRead(_pin);
 
-  // check to see if you just pressed the button
-  // (i.e. the input went from LOW to HIGH), and you've waited long enough
-  // since the last press to ignore any noise:
-
-  // If the switch changed, due to noise or pressing:
-//  if (reading != _lastButtonState) {
-//    // reset the debouncing timer
-//    _lastDebounceTime = millis();
-//  }
-
-//  if ((millis() - _lastDebounceTime) > _debounceDelay) {
-    // whatever the reading is at, it's been there for longer than the debounce
-    // delay, so take it as the actual current state:
-
-    // if the button state has changed:
     if (reading != _buttonState) {
       //what is the new state ?
-        if (reading == HIGH) {
+        if (reading == HIGH) { 	
             _isPushed = true;
-            // was low, now high, start timing for long Push
-            _waitForLongPush = true;
-            _lastLongPushTime = millis();
+			_wasPushed = false;
+			_wasLongPushed = false;
+            // was low, now high, start timing for normal and long wasSomething
+            _RaiseTime = millis();
         } else {
+            // was High, now Low, check timing for normal and long wasSomething
             _isPushed = false;
-            _waitForLongPush = false;
-            _isLongPushed = false;
+			_FallTime = millis();
+			if (( _FallTime - _RaiseTime) > _longDelay ) {
+				_wasLongPushed = true;
+			} else if (( _FallTime - _RaiseTime) > _pushDelay ){
+				_wasPushed = true;
+			} else {
+				_wasLongPushed = false;
+				_wasPushed = false;
+			}	
         }
         _buttonState = reading;
     }
-    else {
-        if (reading == HIGH) {
-            _isPushed = true;
-            if (_waitForLongPush == true) {
-                if ((millis() - _lastLongPushTime) > _longDelay) {
-                    _isLongPushed = true;
-                    _waitForLongPush = false;
-                }
-            }
-        } else {
-            _isPushed = false;
-            _waitForLongPush = false;
-            _isLongPushed = false;
-        }
-    }
-//  }
 }
 
 bool MyButton::isPushed() {
     return _isPushed;
 }
 
-bool MyButton::isLongPushed() {
-    return _isLongPushed;
+bool MyButton::wasPushed() {
+    return _wasPushed;
+}
+
+bool MyButton::wasLongPushed() {
+    return _wasLongPushed;
 }

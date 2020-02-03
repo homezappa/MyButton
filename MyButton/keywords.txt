@@ -1,4 +1,7 @@
 MyButton	KEYWORD1
 isPushed	KEYWORD2
-isLongPushed	KEYWORD2
+wasPushed	KEYWORD2
+wasLongPushed	KEYWORD2
 read	KEYWORD2
+setPushDelay	KEYWORD2
+setLongPushDelay	KEYWORD2

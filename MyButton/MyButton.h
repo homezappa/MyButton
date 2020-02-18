@@ -11,10 +11,9 @@
 class MyButton
 {
   public:
-    //pass a reference to a Print object
-    MyButton();
+    MyButton();									// Constructor
     void begin(uint8_t);						// #Pin
-	void begin(uint8_t,uint8_t);				// #Pin, INPUT_TYPE
+	void begin(uint8_t,uint8_t);				// #Pin, INPUT_TYPE 
 	void begin(uint8_t,uint8_t,uint8_t);		// #Pin, INPUT_TYPE, msec long pushed
     bool isPushed();
 	bool wasPushed();
@@ -23,7 +22,6 @@ class MyButton
 	void setLongPushDelay(uint8_t);
     void read();							// You HAVE to call this at the beginning of loop()
   private:
-	bool			_debug = false;
     int        		_pin;
     bool       		_isPushed;
     bool       	 	_wasPushed;
